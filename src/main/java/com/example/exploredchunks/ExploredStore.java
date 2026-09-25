@@ -23,11 +23,14 @@ public final class ExploredStore {
         dimensions.clear();
     }
 
-    public static void markExplored(String dimension, int chunkX, int chunkZ) {
+    /** Returns true only the first time this chunk gets marked. */
+    public static boolean markExplored(String dimension, int chunkX, int chunkZ) {
         Dimension dim = dimensions.computeIfAbsent(dimension, name -> new Dimension());
         if (dim.chunks.add(key(chunkX, chunkZ))) {
             dim.regions.add(key(chunkX >> 5, chunkZ >> 5));
+            return true;
         }
+        return false;
     }
 
     public static boolean isExplored(String dimension, int chunkX, int chunkZ) {
