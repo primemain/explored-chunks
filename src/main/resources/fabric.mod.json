@@ -1,0 +1,24 @@
+{
+  "schemaVersion": 1,
+  "id": "exploredchunks",
+  "version": "${version}",
+  "name": "Explored Chunks",
+  "description": "Colors every chunk you have loaded blue on Xaero's Minimap.",
+  "environment": "client",
+  "license": "CC0-1.0",
+  "entrypoints": {
+    "client": [
+      "com.example.exploredchunks.ExploredChunks"
+    ]
+  },
+  "mixins": [
+    "exploredchunks.mixins.json"
+  ],
+  "depends": {
+    "fabricloader": ">=0.18.0",
+    "minecraft": "~1.21.11",
+    "java": ">=21",
+    "fabric-api": "*",
+    "xaerominimap": "*"
+  }
+}
