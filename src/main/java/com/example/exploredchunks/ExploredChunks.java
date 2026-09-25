@@ -26,10 +26,16 @@ public class ExploredChunks implements ClientModInitializer {
                 for (int dz = -RADIUS; dz <= RADIUS; dz++) {
                     int cx = center.x + dx;
                     int cz = center.z + dz;
-                    ExploredStore.markExplored(dimension, cx, cz);
                     // Xaero caches minimap tiles and only redraws a chunk's highlight
-                    // when told to, so poke it every tick for the chunks near the player.
-                    refreshHighlight(cx, cz);
+                    // when told to, so only poke it when a chunk is newly marked -
+                    // poking it every tick made the whole minimap redraw constantly and lag.
+                    if (ExploredStore.markExplored(dimension, cx, cz)) {
+                        refreshHighlight(cx, cz);
+                        refreshHighlight(cx - 1, cz);
+                        refreshHighlight(cx + 1, cz);
+                        refreshHighlight(cx, cz - 1);
+                        refreshHighlight(cx, cz + 1);
+                    }
                 }
             }
         });
