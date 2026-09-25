@@ -4,6 +4,9 @@ import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayConnectionEvents;
 import net.minecraft.world.level.ChunkPos;
+import xaero.common.XaeroMinimapSession;
+import xaero.common.minimap.highlight.DimensionHighlighterHandler;
+import xaero.common.minimap.write.MinimapWriter;
 
 public class ExploredChunks implements ClientModInitializer {
     /** How many chunks around you get marked. 1 = a 3x3 square (9 chunks). */
@@ -21,9 +24,24 @@ public class ExploredChunks implements ClientModInitializer {
             String dimension = client.level.dimension().toString();
             for (int dx = -RADIUS; dx <= RADIUS; dx++) {
                 for (int dz = -RADIUS; dz <= RADIUS; dz++) {
-                    ExploredStore.markExplored(dimension, center.x + dx, center.z + dz);
+                    int cx = center.x + dx;
+                    int cz = center.z + dz;
+                    ExploredStore.markExplored(dimension, cx, cz);
+                    // Xaero caches minimap tiles and only redraws a chunk's highlight
+                    // when told to, so poke it every tick for the chunks near the player.
+                    refreshHighlight(cx, cz);
                 }
             }
         });
+    }
+
+    private static void refreshHighlight(int chunkX, int chunkZ) {
+        XaeroMinimapSession session = XaeroMinimapSession.getCurrentSession();
+        if (session == null) return;
+        MinimapWriter writer = session.getMinimapProcessor().getMinimapWriter();
+        if (writer == null) return;
+        DimensionHighlighterHandler handler = writer.getDimensionHighlightHandler();
+        if (handler == null) return;
+        handler.requestRefresh(chunkX >> 5, chunkZ >> 5);
     }
 }
