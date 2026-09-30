@@ -24,8 +24,8 @@ public class ExploredChunks implements ClientModInitializer {
             String dimension = client.level.dimension().toString();
             for (int dx = -RADIUS; dx <= RADIUS; dx++) {
                 for (int dz = -RADIUS; dz <= RADIUS; dz++) {
-                    int cx = center.x + dx;
-                    int cz = center.z + dz;
+                    int cx = center.x() + dx;
+                    int cz = center.z() + dz;
                     // Xaero caches minimap tiles and only redraws a chunk's highlight
                     // when told to, so only poke it when a chunk is newly marked -
                     // poking it every tick made the whole minimap redraw constantly and lag.
